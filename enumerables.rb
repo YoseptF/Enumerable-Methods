@@ -79,12 +79,33 @@ module Enumerable
     final_count
   end
 
-  def my_map
+  def my_map(one_proc = nil)
     new_arr = []
+    if one_proc.nil?
       my_each do |item|
         new_arr.push << yield(item)
       end
+    else
+      my_each do |item|
+        new_arr.push << one_proc.call(item)
+      end
+    end
     new_arr
+  end
+
+  def my_inject(initial = nil)
+    if initial.nil?
+      total = self[0]
+      1.upto(length - 1) do |num|
+        total = yield(total, self[num])
+      end
+    else
+      total = initial
+      0.upto(length - 1) do |num|
+        total = yield(total, self[num])
+      end
+    end
+    total
   end
 end
 
@@ -123,4 +144,26 @@ puts exp.my_count(2)
 
 puts '-------------------------------------------------'
 
-puts exp.my_map {|num| num * 2}
+puts(exp.my_map { |num| num * 2 })
+
+puts '-------------------------------------------------'
+
+puts(%w[a aba].my_inject(0) { |_total, num| num.length })
+
+puts '-------------------------------------------------'
+
+puts(exp.my_inject { |total, num| total + num })
+
+puts '-------------------------------------------------'
+
+def multitply_els(arr)
+  arr.my_inject { |total, num| total * num }
+end
+
+puts multitply_els([2, 4, 5])
+
+puts '-------------------------------------------------'
+
+my_proc = proc { |num| num * 2 }
+
+puts(exp.my_map(my_proc))
