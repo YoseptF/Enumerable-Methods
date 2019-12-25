@@ -20,6 +20,20 @@ module Enumerable
     end
     final_arr
   end
+
+  def my_all?
+    flag = true
+    if block_given?
+      my_each do |item|
+        flag = false unless yield(item)
+      end
+    else
+      my_each do |item|
+        flag = false if item == false || item.nil?
+      end
+    end
+    flag
+  end
 end
 
 exp = [1, 2, 12, 7, 4, 34]
@@ -38,3 +52,7 @@ end
 puts '-------------------------------------------------'
 
 puts exp.my_select(&:even?)
+
+puts '-------------------------------------------------'
+
+puts exp.my_all?
