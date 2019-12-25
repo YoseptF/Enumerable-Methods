@@ -133,7 +133,6 @@ the_array = gets.chomp.split(' ').map { |data| data.integer? ? data.to_i : data 
 option = -1
 
 puts `clear`
-puts the_array
 
 while option != 'e'
   puts 'Now select an operation from the list:'
