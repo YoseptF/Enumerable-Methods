@@ -1,5 +1,22 @@
 # frozen_string_literal: true
 
+require 'io/console'
+def continue_story
+  print 'press any key to continue'
+  STDIN.getch
+  print "            \r" 
+end
+
+class String
+  def integer?
+    to_i.to_s == self
+  end
+end
+
+def multitply_els(arr)
+  arr.my_inject { |total, num| total * num }
+end
+
 module Enumerable
   def my_each
     length.times do |item|
@@ -109,61 +126,67 @@ module Enumerable
   end
 end
 
-exp = [1, 2, 12, 7, 4, 34, 2]
+puts 'Hello, type your array '
+print '(use space to separate items ex.: 1 2 3 4 5 6)'
 
-exp.my_each do |value|
-  puts "value: #{value}"
+the_array = gets.chomp.split(' ').map { |data| data.integer? ? data.to_i : data }
+option = -1
+
+puts `clear`
+puts the_array
+
+while option != 'e'
+  puts 'Now select an operation from the list:'
+  puts '[1] my_each'
+  puts '[2] my_each_with_index'
+  puts '[3] my_select'
+  puts '[4] my_all?'
+  puts '[5] my_any?'
+  puts '[6] my_none?'
+  puts '[7] my_count'
+  puts '[8] my_map'
+  puts '[9] my_inject'
+  puts '[0] multiply_els'
+  puts '[e] exit'
+  option = gets.chomp
+
+  puts `clear`
+
+  case option
+  when '1'
+    the_array.my_each do |value|
+      puts "value: #{value}"
+    end
+  when '2'
+    the_array.my_each_with_index do |index, value|
+      puts "index: #{index} value: #{value}"
+    end
+  when '3'
+    puts the_array.my_select(&:even?)
+  when '4'
+    puts(the_array.my_all? { |num| num < 45 })
+  when '5'
+    puts(the_array.my_any?)
+  when '6'
+    puts(the_array.my_none? { |num| num == 7 })
+  when '7'
+    puts the_array.my_count(2)
+  when '8'
+    my_proc = proc { |num| num * 2 }
+    puts(the_array.my_map(my_proc))
+  when '9'
+    puts(the_array.my_inject { |total, num| total + num })
+  when '0'
+    puts multitply_els(the_array)
+  when 'e'
+    puts 'Goodbye'
+  when 'E'
+    puts 'Goodbye'
+  else
+    puts 'wrong input'
+  end
+
+  continue_story
+  puts `clear`
+
 end
-
-puts '-------------------------------------------------'
-
-exp.my_each_with_index do |index, value|
-  puts "index: #{index}"
-  puts "value: #{value}"
-end
-
-puts '-------------------------------------------------'
-
-puts exp.my_select(&:even?)
-
-puts '-------------------------------------------------'
-
-puts(exp.my_all? { |num| num < 45 })
-
-puts '-------------------------------------------------'
-
-puts(exp.my_any?)
-
-puts '-------------------------------------------------'
-
-puts(exp.my_none? { |num| num == 7 })
-
-puts '-------------------------------------------------'
-
-puts exp.my_count(2)
-
-puts '-------------------------------------------------'
-
-puts(exp.my_map { |num| num * 2 })
-
-puts '-------------------------------------------------'
-
-puts(%w[a aba].my_inject(0) { |_total, num| num.length })
-
-puts '-------------------------------------------------'
-
-puts(exp.my_inject { |total, num| total + num })
-
-puts '-------------------------------------------------'
-
-def multitply_els(arr)
-  arr.my_inject { |total, num| total * num }
-end
-
-puts multitply_els([2, 4, 5])
-
-puts '-------------------------------------------------'
-
-my_proc = proc { |num| num * 2 }
-
-puts(exp.my_map(my_proc))
