@@ -4,7 +4,7 @@ require 'io/console'
 def continue_story
   print 'press any key to continue'
   STDIN.getch
-  print "            \r" 
+  print "            \r"
 end
 
 class String
