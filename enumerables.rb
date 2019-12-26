@@ -19,18 +19,26 @@ end
 
 module Enumerable
   def my_each
+    return to_enum(:my_each) unless block_given?
+
     length.times do |item|
       yield(self[item])
     end
+    self
   end
 
   def my_each_with_index
+    return to_enum(:my_each_with_index) unless block_given?
+
     length.times do |item|
       yield(item, self[item])
     end
+    self
   end
 
   def my_select
+    return to_enum(:my_select) unless block_given?
+
     final_arr = []
     my_each do |item|
       final_arr << item if yield(item)
@@ -74,7 +82,7 @@ module Enumerable
       end
     else
       my_each do |item|
-        flag = false if item == false || item.nil?
+        flag = false unless item == false || item.nil?
       end
     end
     flag
@@ -126,66 +134,71 @@ module Enumerable
   end
 end
 
-puts 'Hello, type your array '
-print '(use space to separate items ex.: 1 2 3 4 5 6)'
+the_array = [1, 2, 3]
+puts multitply_els(the_array)
+puts '----------------------'
+puts multitply_els(the_array)
 
-the_array = gets.chomp.split(' ').map { |data| data.integer? ? data.to_i : data }
-option = -1
-
-puts `clear`
-
-while option != 'e'
-  puts 'Now select an operation from the list:'
-  puts '[1] my_each'
-  puts '[2] my_each_with_index'
-  puts '[3] my_select'
-  puts '[4] my_all?'
-  puts '[5] my_any?'
-  puts '[6] my_none?'
-  puts '[7] my_count'
-  puts '[8] my_map'
-  puts '[9] my_inject'
-  puts '[0] multiply_els'
-  puts '[e] exit'
-  option = gets.chomp
-
-  puts `clear`
-
-  case option
-  when '1'
-    the_array.my_each do |value|
-      puts "value: #{value}"
-    end
-  when '2'
-    the_array.my_each_with_index do |index, value|
-      puts "index: #{index} value: #{value}"
-    end
-  when '3'
-    puts the_array.my_select(&:even?)
-  when '4'
-    puts(the_array.my_all? { |num| num < 45 })
-  when '5'
-    puts(the_array.my_any?)
-  when '6'
-    puts(the_array.my_none? { |num| num == 7 })
-  when '7'
-    puts the_array.my_count(2)
-  when '8'
-    my_proc = proc { |num| num * 2 }
-    puts(the_array.my_map(my_proc))
-  when '9'
-    puts(the_array.my_inject { |total, num| total + num })
-  when '0'
-    puts multitply_els(the_array)
-  when 'e'
-    puts 'Goodbye'
-  when 'E'
-    puts 'Goodbye'
-  else
-    puts 'wrong input'
-  end
-
-  continue_story
-  puts `clear`
-
-end
+# puts 'Hello, type your array '
+# print '(use space to separate items ex.: 1 2 3 4 5 6)'
+#
+# the_array = gets.chomp.split(' ').map { |data| data.integer? ? data.to_i : data }
+# option = -1
+#
+# puts `clear`
+#
+# while option != 'e'
+#   puts 'Now select an operation from the list:'
+#   puts '[1] my_each'
+#   puts '[2] my_each_with_index'
+#   puts '[3] my_select'
+#   puts '[4] my_all?'
+#   puts '[5] my_any?'
+#   puts '[6] my_none?'
+#   puts '[7] my_count'
+#   puts '[8] my_map'
+#   puts '[9] my_inject'
+#   puts '[0] multiply_els'
+#   puts '[e] exit'
+#   option = gets.chomp
+#
+#   puts `clear`
+#
+#   case option
+#   when '1'
+#     the_array.my_each do |value|
+#       puts "value: #{value}"
+#     end
+#   when '2'
+#     the_array.my_each_with_index do |index, value|
+#       puts "index: #{index} value: #{value}"
+#     end
+#   when '3'
+#     puts the_array.my_select(&:even?)
+#   when '4'
+#     puts(the_array.my_all? { |num| num < 45 })
+#   when '5'
+#     puts(the_array.my_any?)
+#   when '6'
+#     puts(the_array.my_none? { |num| num == 7 })
+#   when '7'
+#     puts the_array.my_count(2)
+#   when '8'
+#     my_proc = proc { |num| num * 2 }
+#     puts(the_array.my_map(my_proc))
+#   when '9'
+#     puts(the_array.my_inject { |total, num| total + num })
+#   when '0'
+#     puts multitply_els(the_array)
+#   when 'e'
+#     puts 'Goodbye'
+#   when 'E'
+#     puts 'Goodbye'
+#   else
+#     puts 'wrong input'
+#   end
+#
+#   continue_story
+#   puts `clear`
+#
+# end
