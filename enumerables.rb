@@ -34,7 +34,7 @@ module Enumerable
 
     real_array = to_a
 
-    real_array.times do |item|
+    real_array.length.times do |item|
       yield(item, real_array[item])
     end
     self
@@ -160,12 +160,12 @@ module Enumerable
     if !sym.nil? && !initial.nil?
       total = initial
       0.upto(real_array.length - 1) do |num|
-        total = total.method(sym).(real_array[num])
+        total = total.method(sym).call(real_array[num])
       end
     elsif (!initial.is_a? Integer) && !initial.nil?
       total = real_array[0]
       1.upto(real_array.length - 1) do |num|
-        total = total.method(initial).(real_array[num])
+        total = total.method(initial).call(real_array[num])
       end
     elsif (initial.is_a? Integer) && block_given?
       total = initial
@@ -182,15 +182,8 @@ module Enumerable
   end
 end
 
-the_array = [1, 2, 3]
-
-puts (1..4).my_all?(Integer)
-
-=begin
-
 puts 'Hello, type your array '
 print '(use space to separate items ex.: 1 2 3 4 5 6)'
-
 
 the_array = gets.chomp.split(' ').map { |data| data.integer? ? data.to_i : data }
 option = -1
@@ -252,4 +245,3 @@ while option != 'e'
   puts `clear`
 
 end
-=end
