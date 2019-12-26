@@ -21,8 +21,10 @@ module Enumerable
   def my_each
     return to_enum(:my_each) unless block_given?
 
-    length.times do |item|
-      yield(self[item])
+    real_array = to_a
+
+    real_array.length.times do |item|
+      yield(real_array[item])
     end
     self
   end
@@ -30,8 +32,10 @@ module Enumerable
   def my_each_with_index
     return to_enum(:my_each_with_index) unless block_given?
 
-    length.times do |item|
-      yield(item, self[item])
+    real_array = to_a
+
+    real_array.times do |item|
+      yield(item, real_array[item])
     end
     self
   end
@@ -46,9 +50,19 @@ module Enumerable
     final_arr
   end
 
-  def my_all?
+  def my_all?(condition = nil)
     flag = true
-    if block_given?
+    if !condition.nil?
+      if (condition.instance_of? Integer) || (condition.instance_of? String) || (condition.instance_of? Regexp)
+        my_each do |item|
+          flag = false unless item == condition
+        end
+      else
+        my_each do |item|
+          flag = false unless item.is_a? condition
+        end
+      end
+    elsif block_given?
       my_each do |item|
         flag = false unless yield(item)
       end
@@ -60,9 +74,19 @@ module Enumerable
     flag
   end
 
-  def my_any?
+  def my_any?(condition = nil)
     flag = false
-    if block_given?
+    if !condition.nil?
+      if (condition.instance_of? Integer) || (condition.instance_of? String)
+        my_each do |item|
+          flag = true if item == condition
+        end
+      else
+        my_each do |item|
+          flag = true if item.is_a? condition
+        end
+      end
+    elsif block_given?
       my_each do |item|
         flag = true if yield(item)
       end
@@ -74,9 +98,19 @@ module Enumerable
     flag
   end
 
-  def my_none?
+  def my_none?(condition = nil)
     flag = true
-    if block_given?
+    if !condition.nil?
+      if (condition.instance_of? Integer) || (condition.instance_of? String)
+        my_each do |item|
+          flag = false if item == condition
+        end
+      else
+        my_each do |item|
+          flag = false if item.is_a? condition
+        end
+      end
+    elsif block_given?
       my_each do |item|
         flag = false if yield(item)
       end
@@ -106,28 +140,42 @@ module Enumerable
 
   def my_map(one_proc = nil)
     new_arr = []
-    if one_proc.nil?
+    if block_given?
       my_each do |item|
         new_arr.push << yield(item)
       end
-    else
+    elsif !one_proc.nil?
       my_each do |item|
         new_arr.push << one_proc.call(item)
       end
+    else
+      return to_enum(:map)
     end
     new_arr
   end
 
-  def my_inject(initial = nil)
-    if initial.nil?
-      total = self[0]
-      1.upto(length - 1) do |num|
-        total = yield(total, self[num])
-      end
-    else
+  def my_inject(initial = nil, sym = nil)
+    real_array = to_a
+
+    if !sym.nil? && !initial.nil?
       total = initial
-      0.upto(length - 1) do |num|
-        total = yield(total, self[num])
+      0.upto(real_array.length - 1) do |num|
+        total = total.method(sym).(real_array[num])
+      end
+    elsif (!initial.is_a? Integer) && !initial.nil?
+      total = real_array[0]
+      1.upto(real_array.length - 1) do |num|
+        total = total.method(initial).(real_array[num])
+      end
+    elsif (initial.is_a? Integer) && block_given?
+      total = initial
+      0.upto(real_array.length - 1) do |num|
+        total = yield(total, real_array[num])
+      end
+    elsif block_given?
+      total = real_array[0]
+      1.upto(real_array.length - 1) do |num|
+        total = yield(total, real_array[num])
       end
     end
     total
@@ -135,12 +183,14 @@ module Enumerable
 end
 
 the_array = [1, 2, 3]
-puts multitply_els(the_array)
-puts '----------------------'
-puts multitply_els(the_array)
+
+puts (1..4).my_all?(Integer)
+
+=begin
 
 puts 'Hello, type your array '
 print '(use space to separate items ex.: 1 2 3 4 5 6)'
+
 
 the_array = gets.chomp.split(' ').map { |data| data.integer? ? data.to_i : data }
 option = -1
@@ -202,3 +252,4 @@ while option != 'e'
   puts `clear`
 
 end
+=end

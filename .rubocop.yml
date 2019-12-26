@@ -20,12 +20,18 @@ Metrics/ClassLength:
   Max: 150
 Metrics/ModuleLength:
   Max: 150
+Metrics/CyclomaticComplexity:
+  Max: 50
+Metrics/PerceivedComplexity:
+  Max: 50
 Metrics/BlockLength:
   ExcludedMethods: ["describe"]
 
 Style/Documentation:
   Enabled: false
 Style/ClassAndModuleChildren:
+  Enabled: false
+Style/CaseEquality:
   Enabled: false
 
 Layout/ExtraSpacing:
